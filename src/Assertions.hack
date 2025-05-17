@@ -11,6 +11,10 @@ interface Assertions<T> {
   where
     T = ?Tnonnull;
   public function toBeTrue()[]: this;
+  public function toContainSubstring(string $other)[]: this where T as string;
   public function toEqual(T $other)[]: this;
+  public function toHaveSameContentAs(
+    KeyedContainer<arraykey, mixed> $other,
+  )[]: this where T as KeyedContainer<arraykey, mixed>;
   public function toNotBeNan()[]: this where T as num;
 }

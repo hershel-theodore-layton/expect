@@ -1,7 +1,7 @@
 /** expect is MIT licensed, see /LICENSE. */
 namespace HTL\Expect;
 
-use namespace HH\Lib\{C, Str};
+use namespace HH\Lib\{C, Keyset, Str, Vec};
 use namespace HH\ReifiedGenerics;
 use type Throwable;
 use const INF;
@@ -103,9 +103,75 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     return $this;
   }
 
+  public function toContainSubstring(string $other)[]: this where T as string {
+    if (!Str\contains($this->getValue(), $other)) {
+      throw Surprise::create(
+        Str\format(
+          'Expected a string which contains "%s", but got "%s"',
+          $other,
+          $this->getValue(),
+        ),
+        $this->getValue(),
+      );
+    }
+
+    return $this;
+  }
+
   public function toEqual(T $value)[]: this {
     if ($value !== $this->getValue()) {
       throw Surprise::create('Expected the values to be equal', $value);
+    }
+
+    return $this;
+  }
+
+  public function toHaveSameContentAs(
+    KeyedContainer<arraykey, mixed> $other,
+  )[]: this where T as KeyedContainer<arraykey, mixed> {
+    $value = $this->getValue();
+
+    if (C\count($other) !== C\count($value)) {
+      throw Surprise::create(
+        Str\format(
+          'Expected to have %d elements, but got %d',
+          C\count($other),
+          C\count($value),
+        ),
+        $value,
+      );
+    }
+
+    $missing_keys = Keyset\diff(Keyset\keys($other), Keyset\keys($value));
+
+    if (!C\is_empty($missing_keys)) {
+      throw Surprise::create(
+        Str\format(
+          'Expected to have the exact same keys, but these were missing: %s',
+          Vec\map(
+            $missing_keys,
+            $k ==> $k is string
+              ? Str\format('string(%s)', $k)
+              : Str\format('int(%d)', $k as int),
+          )
+            |> Str\join($$, ', '),
+        ),
+        $value,
+      );
+    }
+
+    foreach ($other as $k => $v) {
+      if (!$value[$k] === $v) {
+        throw Surprise::create(
+          Str\format(
+            'Expected the value at [%s] to be equal',
+            $k is string
+              ? Str\format('string(%s)', $k)
+              : Str\format('int(%d)', $k),
+          ),
+          $value,
+        );
+      }
     }
 
     return $this;
