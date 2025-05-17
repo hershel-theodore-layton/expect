@@ -8,8 +8,8 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    # Run every day at x:x4PM
-    - cron: "x4 1x * * *"
+    # Run every day at 17:54PM
+    - cron: "54 17 * * *"
 jobs:
   build:
     name: HHVM ${{matrix.hhvm}}
