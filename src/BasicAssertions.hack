@@ -177,6 +177,17 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     return $this;
   }
 
+  public function toHaveType<<<__Enforceable>> reify Ttype>(
+  )[]: Assertions<Ttype> {
+    $value = $this->getValue();
+
+    if (!$value is Ttype) {
+      throw Surprise::create('Expected a value of a different type', $value);
+    }
+
+    return $this->withValue($value);
+  }
+
   public function toHaveThrown<<<__Enforceable>> reify Tex as Throwable>(
     ?string $message_substring = null,
   )[]: this {

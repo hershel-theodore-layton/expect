@@ -16,5 +16,7 @@ interface Assertions<T> {
   public function toHaveSameContentAs(
     KeyedContainer<arraykey, mixed> $other,
   )[]: this where T as KeyedContainer<arraykey, mixed>;
+  public function toHaveType<<<__Enforceable>> reify Ttype>(
+  )[]: Assertions<Ttype>;
   public function toNotBeNan()[]: this where T as num;
 }
