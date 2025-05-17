@@ -6,7 +6,7 @@
     "hhvm": "^4.102"
   },
   "require-dev": {
-    "hhvm/hsl": "^4"
+    "hhvm/hhvm-autoload": "^3.2"
   },
   "scripts": {
     "post-install-cmd": [".github/workflows/prepare-environment.sh"],

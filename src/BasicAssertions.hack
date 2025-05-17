@@ -1,7 +1,7 @@
 /** expect is MIT licensed, see /LICENSE. */
 namespace HTL\Expect;
 
-use namespace HH\Lib\{Math, Str};
+use namespace HH\Lib\Str;
 use namespace HH\ReifiedGenerics;
 use type Throwable;
 use const INF;
