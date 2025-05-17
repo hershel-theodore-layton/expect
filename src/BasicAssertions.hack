@@ -1,7 +1,7 @@
 /** expect is MIT licensed, see /LICENSE. */
 namespace HTL\Expect;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{C, Str};
 use namespace HH\ReifiedGenerics;
 use type Throwable;
 use const INF;
@@ -12,6 +12,31 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
   abstract protected function withValue<Tvalue>(
     Tvalue $value,
   )[]: InvokedAssertions<Tvalue>;
+
+  public function toBeEmpty()[]: this where T as Container<mixed> {
+    if (!C\is_empty($this->getValue())) {
+      throw Surprise::create(
+        Str\format(
+          'Expected an empty container, but found %d elements',
+          C\count($this->getValue()),
+        ),
+        $this->getValue(),
+      );
+    }
+
+    return $this;
+  }
+
+  public function toBeFalse()[]: this {
+    if ($this->getValue() !== false) {
+      throw Surprise::create(
+        'Expected false, but got something else',
+        $this->getValue(),
+      );
+    }
+
+    return $this;
+  }
 
   public function toBeGreaterThan(num $other)[]: this where T as num {
     $this->toNotBeNan();
@@ -65,6 +90,17 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     }
 
     return $this->withValue($this->getValue() as nonnull);
+  }
+
+  public function toBeTrue()[]: this {
+    if ($this->getValue() !== true) {
+      throw Surprise::create(
+        'Expected true, but got something else',
+        $this->getValue(),
+      );
+    }
+
+    return $this;
   }
 
   public function toEqual(T $value)[]: this {
