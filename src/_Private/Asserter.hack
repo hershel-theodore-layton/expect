@@ -17,4 +17,9 @@ final class Asserter<T> {
   protected function getValue()[]: T {
     return $this->value;
   }
+
+  <<__Override>>
+  protected function withValue<Tvalue>(Tvalue $value)[]: Asserter<Tvalue> {
+    return new Asserter<Tvalue>($value, $this->thrown);
+  }
 }

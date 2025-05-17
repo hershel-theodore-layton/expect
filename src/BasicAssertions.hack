@@ -1,13 +1,68 @@
 /** expect is MIT licensed, see /LICENSE. */
 namespace HTL\Expect;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Math, Str};
 use namespace HH\ReifiedGenerics;
 use type Throwable;
 
 trait BasicAssertions<T> implements InvokedAssertions<T> {
   abstract protected function getThrown()[]: ?Throwable;
   abstract protected function getValue()[]: T;
+  abstract protected function withValue<Tvalue>(
+    Tvalue $value,
+  )[]: InvokedAssertions<Tvalue>;
+
+  public function toBeGreaterThan(num $other)[]: this where T as num {
+    if ($this->getValue() <= $other || Math\is_nan($this->getValue())) {
+      throw Surprise::create(
+        Str\format(
+          'Expected value to be greater than %s, but got %s',
+          (string)$other,
+          (string)$this->getValue(),
+        ),
+        $this->getValue(),
+      );
+    }
+
+    return $this;
+  }
+
+  public function toBeLessThan(num $other)[]: this where T as num {
+    if ($this->getValue() >= $other || Math\is_nan($this->getValue())) {
+      throw Surprise::create(
+        Str\format(
+          'Expected value to be greater than %s, but got %s',
+          (string)$other,
+          (string)$this->getValue(),
+        ),
+        $this->getValue(),
+      );
+    }
+
+    return $this;
+  }
+
+  public function toBeNull()[]: this {
+    if ($this->getValue() is nonnull) {
+      throw Surprise::create(
+        'Expected null, but got a nonnull value',
+        $this->getValue(),
+      );
+    }
+
+    return $this;
+  }
+
+  public function toBeNonnull<Tnonnull>()[]: Assertions<Tnonnull>
+  where
+    T = ?Tnonnull {
+    if ($this->getValue() is null) {
+      throw
+        Surprise::create('Expected nonnull, but got null', $this->getValue());
+    }
+
+    return $this->withValue($this->getValue() as nonnull);
+  }
 
   public function toEqual(T $value)[]: this {
     if ($value !== $this->getValue()) {
