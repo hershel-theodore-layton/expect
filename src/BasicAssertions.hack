@@ -167,7 +167,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
             'Expected the value at [%s] to be equal',
             $k is string
               ? Str\format('string(%s)', $k)
-              : Str\format('int(%d)', $k),
+              : Str\format('int(%d)', $k as int),
           ),
           $value,
         );
