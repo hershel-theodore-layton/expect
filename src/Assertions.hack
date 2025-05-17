@@ -9,4 +9,5 @@ interface Assertions<T> {
   where
     T = ?Tnonnull;
   public function toEqual(T $other)[]: this;
+  public function toNotBeNan()[]: this where T as num;
 }

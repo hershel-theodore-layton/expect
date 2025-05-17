@@ -4,6 +4,7 @@ namespace HTL\Expect;
 use namespace HH\Lib\{Math, Str};
 use namespace HH\ReifiedGenerics;
 use type Throwable;
+use const INF;
 
 trait BasicAssertions<T> implements InvokedAssertions<T> {
   abstract protected function getThrown()[]: ?Throwable;
@@ -13,7 +14,8 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
   )[]: InvokedAssertions<Tvalue>;
 
   public function toBeGreaterThan(num $other)[]: this where T as num {
-    if ($this->getValue() <= $other || Math\is_nan($this->getValue())) {
+    $this->toNotBeNan();
+    if ($this->getValue() <= $other) {
       throw Surprise::create(
         Str\format(
           'Expected value to be greater than %s, but got %s',
@@ -28,7 +30,8 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
   }
 
   public function toBeLessThan(num $other)[]: this where T as num {
-    if ($this->getValue() >= $other || Math\is_nan($this->getValue())) {
+    $this->toNotBeNan();
+    if ($this->getValue() >= $other) {
       throw Surprise::create(
         Str\format(
           'Expected value to be greater than %s, but got %s',
@@ -114,5 +117,22 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     }
 
     return $this;
+  }
+
+  public function toNotBeNan()[]: this where T as num {
+    // `Math\is_nan()` became pure somewhere between hhvm 4.102 and 4.128.
+    // This expression is true for all numbers, except for NAN.
+    // `-INF >= -INF` is true because they are equal; `finite >= -INF` is true
+    // because any finite number is greater than `-INF`. `INF >= -INF` is true
+    // because `INF` is greater than `-INF`; `NAN >= -INF` is false, because
+    // any comparison with `NAN` always returns false.
+    if ($this->getValue() >= -INF) {
+      return $this;
+    }
+
+    throw Surprise::create(
+      'Expected a nonnan number, but got NAN',
+      $this->getValue(),
+    );
   }
 }
