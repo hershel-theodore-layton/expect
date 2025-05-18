@@ -161,7 +161,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     }
 
     foreach ($other as $k => $v) {
-      if (!$value[$k] === $v) {
+      if ($value[$k] !== $v) {
         throw Surprise::create(
           Str\format(
             'Expected the value at [%s] to be equal',
