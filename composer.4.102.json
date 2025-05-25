@@ -3,7 +3,8 @@
   "description": "Basic test assertions `expect(...)->toEqual('valid')`.",
   "license": "MIT",
   "require": {
-    "hhvm": "^4.102"
+    "hhvm": "^4.102",
+    "hershel-theodore-layton/hhvm-four-shim": "<1"
   },
   "require-dev": {
     "hhvm/hhvm-autoload": "^3.2"
