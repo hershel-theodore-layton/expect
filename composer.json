@@ -3,7 +3,7 @@
   "description": "Basic test assertions `expect(...)->toEqual('valid')`.",
   "license": "MIT",
   "require": {
-    "hhvm": "^4.102"
+    "hhvm": ">=4.102"
   },
   "require-dev": {},
   "scripts": {
