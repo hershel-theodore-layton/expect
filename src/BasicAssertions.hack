@@ -3,6 +3,7 @@ namespace HTL\Expect;
 
 use namespace HH\Lib\{C, Keyset, Str, Vec};
 use namespace HH\ReifiedGenerics;
+use namespace HTL\HH4Shim;
 use type Throwable;
 use const INF;
 
@@ -152,7 +153,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
             $missing_keys,
             $k ==> $k is string
               ? Str\format('string(%s)', $k)
-              : Str\format('int(%d)', $k as int),
+              : Str\format('int(%d)', HH4Shim\to_mixed($k) as int),
           )
             |> Str\join($$, ', '),
         ),
@@ -167,7 +168,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
             'Expected the value at [%s] to be equal',
             $k is string
               ? Str\format('string(%s)', $k)
-              : Str\format('int(%d)', $k as int),
+              : Str\format('int(%d)', HH4Shim\to_mixed($k) as int),
           ),
           $value,
         );
