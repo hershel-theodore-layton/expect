@@ -133,7 +133,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       throw Surprise::create(
         Str\format(
           'Expected the values to be equal, but got: %s',
-          var_export_pure($value),
+          var_export_pure($this->getValue()),
         ),
         $value,
       );
