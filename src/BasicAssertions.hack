@@ -1,11 +1,9 @@
 /** expect is MIT licensed, see /LICENSE. */
 namespace HTL\Expect;
 
-use namespace HH\Lib\{C, Keyset, Str, Vec};
+use namespace HH\Lib\{C, Keyset, Math, Str, Vec};
 use namespace HH\ReifiedGenerics;
-use namespace HTL\HH4Shim;
 use type Throwable;
-use const INF;
 
 trait BasicAssertions<T> implements InvokedAssertions<T> {
   abstract protected function getThrown()[]: ?Throwable;
@@ -153,7 +151,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
             $missing_keys,
             $k ==> $k is string
               ? Str\format('string(%s)', $k)
-              : Str\format('int(%d)', HH4Shim\to_mixed($k) as int),
+              : Str\format('int(%d)', $k),
           )
             |> Str\join($$, ', '),
         ),
@@ -168,7 +166,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
             'Expected the value at [%s] to be equal',
             $k is string
               ? Str\format('string(%s)', $k)
-              : Str\format('int(%d)', HH4Shim\to_mixed($k) as int),
+              : Str\format('int(%d)', $k),
           ),
           $value,
         );
@@ -234,13 +232,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
   }
 
   public function toNotBeNan()[]: this where T as num {
-    // `Math\is_nan()` became pure somewhere between hhvm 4.102 and 4.128.
-    // This expression is true for all numbers, except for NAN.
-    // `-INF >= -INF` is true because they are equal; `finite >= -INF` is true
-    // because any finite number is greater than `-INF`. `INF >= -INF` is true
-    // because `INF` is greater than `-INF`; `NAN >= -INF` is false, because
-    // any comparison with `NAN` always returns false.
-    if ($this->getValue() >= -INF) {
+    if (!Math\is_nan($this->getValue())) {
       return $this;
     }
 
