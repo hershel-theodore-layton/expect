@@ -4,6 +4,7 @@ namespace HTL\Expect;
 use namespace HH\Lib\{C, Keyset, Math, Str, Vec};
 use namespace HH\ReifiedGenerics;
 use type Throwable;
+use function var_export_pure;
 
 trait BasicAssertions<T> implements InvokedAssertions<T> {
   abstract protected function getThrown()[]: ?Throwable;
@@ -16,8 +17,9 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     if (!C\is_empty($this->getValue())) {
       throw Surprise::create(
         Str\format(
-          'Expected an empty container, but found %d elements',
+          'Expected an empty container, but found %d elements: %s',
           C\count($this->getValue()),
+          var_export_pure($this->getValue()),
         ),
         $this->getValue(),
       );
@@ -29,7 +31,10 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
   public function toBeFalse()[]: this {
     if ($this->getValue() !== false) {
       throw Surprise::create(
-        'Expected false, but got something else',
+        Str\format(
+          'Expected false, but got: %s',
+          var_export_pure($this->getValue()),
+        ),
         $this->getValue(),
       );
     }
@@ -72,7 +77,10 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
   public function toBeNull()[]: this {
     if ($this->getValue() is nonnull) {
       throw Surprise::create(
-        'Expected null, but got a nonnull value',
+        Str\format(
+          'Expected null, but got: %s',
+          var_export_pure($this->getValue()),
+        ),
         $this->getValue(),
       );
     }
@@ -94,7 +102,10 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
   public function toBeTrue()[]: this {
     if ($this->getValue() !== true) {
       throw Surprise::create(
-        'Expected true, but got something else',
+        Str\format(
+          'Expected true, but got: %s',
+          var_export_pure($this->getValue()),
+        ),
         $this->getValue(),
       );
     }
@@ -119,7 +130,13 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
 
   public function toEqual(T $value)[]: this {
     if ($value !== $this->getValue()) {
-      throw Surprise::create('Expected the values to be equal', $value);
+      throw Surprise::create(
+        Str\format(
+          'Expected the values to be equal, but got: %s',
+          var_export_pure($value),
+        ),
+        $value,
+      );
     }
 
     return $this;
@@ -163,10 +180,12 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       if ($value[$k] !== $v) {
         throw Surprise::create(
           Str\format(
-            'Expected the value at [%s] to be equal',
+            'Expected the value at [%s] to be equal, but they were %s and %s',
             $k is string
               ? Str\format('string(%s)', $k)
               : Str\format('int(%d)', $k),
+            var_export_pure($value[$k]),
+            var_export_pure($v),
           ),
           $value,
         );
@@ -181,7 +200,13 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     $value = $this->getValue();
 
     if (!$value is Ttype) {
-      throw Surprise::create('Expected a value of a different type', $value);
+      throw Surprise::create(
+        Str\format(
+          'Expected a value of a different type, but got %s',
+          var_export_pure($this->getValue()),
+        ),
+        $value,
+      );
     }
 
     return $this->withValue($value);
@@ -206,9 +231,9 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     if (!$thrown is Tex) {
       throw Surprise::create(
         Str\format(
-          'Expected a %s to have been thrown, but got a %s.',
+          'Expected a %s to have been thrown, but got %s.',
           $ex_name,
-          \get_class($thrown),
+          var_export_pure($thrown),
         ),
         $thrown,
       );
