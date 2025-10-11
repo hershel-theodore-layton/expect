@@ -159,7 +159,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     }
 
     $missing_keys =
-      Keyset\diff<arraykey, arraykey>(Keyset\keys($other), Keyset\keys($value));
+      Keyset\diff(Keyset\keys($other), Keyset\keys($value));
 
     if (!C\is_empty($missing_keys)) {
       throw Surprise::create(
@@ -167,7 +167,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
           'Expected to have the exact same keys, but these were missing: %s',
           Vec\map(
             $missing_keys,
-            $k ==> $k is string
+            (arraykey $k) ==> $k is string
               ? Str\format('string(%s)', $k)
               : Str\format('int(%d)', $k),
           )
