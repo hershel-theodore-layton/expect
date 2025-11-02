@@ -19,7 +19,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
         Str\format(
           'Expected an empty container, but found %d elements: %s',
           C\count($this->getValue()),
-          var_export_pure($this->getValue()),
+          var_export_pure($this->getValue()) as string,
         ),
         $this->getValue(),
       );
@@ -33,7 +33,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       throw Surprise::create(
         Str\format(
           'Expected false, but got: %s',
-          var_export_pure($this->getValue()),
+          var_export_pure($this->getValue()) as string,
         ),
         $this->getValue(),
       );
@@ -79,7 +79,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       throw Surprise::create(
         Str\format(
           'Expected null, but got: %s',
-          var_export_pure($this->getValue()),
+          var_export_pure($this->getValue()) as string,
         ),
         $this->getValue(),
       );
@@ -104,7 +104,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       throw Surprise::create(
         Str\format(
           'Expected true, but got: %s',
-          var_export_pure($this->getValue()),
+          var_export_pure($this->getValue()) as string,
         ),
         $this->getValue(),
       );
@@ -133,7 +133,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       throw Surprise::create(
         Str\format(
           'Expected the values to be equal, but got: %s',
-          var_export_pure($this->getValue()),
+          var_export_pure($this->getValue()) as string,
         ),
         $value,
       );
@@ -158,8 +158,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       );
     }
 
-    $missing_keys =
-      Keyset\diff(Keyset\keys($other), Keyset\keys($value));
+    $missing_keys = Keyset\diff(Keyset\keys($other), Keyset\keys($value));
 
     if (!C\is_empty($missing_keys)) {
       throw Surprise::create(
@@ -185,8 +184,8 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
             $k is string
               ? Str\format('string(%s)', $k)
               : Str\format('int(%d)', $k),
-            var_export_pure($value[$k]),
-            var_export_pure($v),
+            var_export_pure($value[$k]) as string,
+            var_export_pure($v) as string,
           ),
           $value,
         );
@@ -204,7 +203,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       throw Surprise::create(
         Str\format(
           'Expected a value of a different type, but got %s',
-          var_export_pure($this->getValue()),
+          var_export_pure($this->getValue()) as string,
         ),
         $value,
       );
@@ -234,7 +233,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
         Str\format(
           'Expected a %s to have been thrown, but got %s.',
           $ex_name,
-          var_export_pure($thrown),
+          var_export_pure($thrown) as string,
         ),
         $thrown,
       );
