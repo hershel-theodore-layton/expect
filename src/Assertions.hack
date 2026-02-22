@@ -2,6 +2,7 @@
 namespace HTL\Expect;
 
 interface Assertions<T> {
+  public function getValue()[]: T;
   public function toBeEmpty()[]: this where T as Container<mixed>;
   public function toBeFalse()[]: this;
   public function toBeGreaterThan(num $other)[]: this where T as num;
@@ -11,6 +12,9 @@ interface Assertions<T> {
   where
     T = ?Tnonnull;
   public function toBeTrue()[]: this;
+  public function toContainElement(mixed $other)[]: this
+  where
+    T as Container<mixed>;
   public function toContainSubstring(string $other)[]: this where T as string;
   public function toEqual(T $other)[]: this;
   public function toHaveSameContentAs(

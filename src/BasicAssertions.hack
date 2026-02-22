@@ -8,7 +8,6 @@ use function var_export_pure;
 
 trait BasicAssertions<T> implements InvokedAssertions<T> {
   abstract protected function getThrown()[]: ?Throwable;
-  abstract protected function getValue()[]: T;
   abstract protected function withValue<Tvalue>(
     Tvalue $value,
   )[]: InvokedAssertions<Tvalue>;
@@ -104,6 +103,23 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       throw Surprise::create(
         Str\format(
           'Expected true, but got: %s',
+          var_export_pure($this->getValue()) as string,
+        ),
+        $this->getValue(),
+      );
+    }
+
+    return $this;
+  }
+
+  public function toContainElement(mixed $other)[]: this
+  where
+    T as Container<mixed> {
+    if (!C\contains($this->getValue(), $other)) {
+      throw Surprise::create(
+        Str\format(
+          'Expected the Container to contain %s, but this value was not present in %s',
+          var_export_pure($other) as string,
           var_export_pure($this->getValue()) as string,
         ),
         $this->getValue(),

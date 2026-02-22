@@ -14,7 +14,7 @@ final class Asserter<T> {
   }
 
   <<__Override>>
-  protected function getValue()[]: T {
+  public function getValue()[]: T {
     return $this->value;
   }
 
