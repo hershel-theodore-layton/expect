@@ -42,6 +42,10 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
   }
 
   public function toBeGreaterThan(num $other)[]: this where T as num {
+    invariant(
+      !Math\is_nan($other),
+      'Comparing to the expected value NaN is not meaningful.',
+    );
     $this->toNotBeNan();
     if ($this->getValue() <= $other) {
       throw Surprise::create(
@@ -58,6 +62,10 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
   }
 
   public function toBeLessThan(num $other)[]: this where T as num {
+    invariant(
+      !Math\is_nan($other),
+      'Comparing to the expected value NaN is not meaningful.',
+    );
     $this->toNotBeNan();
     if ($this->getValue() >= $other) {
       throw Surprise::create(
