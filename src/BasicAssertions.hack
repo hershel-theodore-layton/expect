@@ -290,4 +290,38 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       $this->getValue(),
     );
   }
+
+  public function toNotContainElement(mixed $other)[]: this
+  where
+    T as Container<mixed> {
+    if (C\contains($this->getValue(), $other)) {
+      throw Surprise::create(
+        Str\format(
+          'Expected the Container to not contain %s, but this value was present in %s',
+          var_export_pure($other) as string,
+          var_export_pure($this->getValue()) as string,
+        ),
+        $this->getValue(),
+      );
+    }
+
+    return $this;
+  }
+
+  public function toNotContainSubstring(string $other)[]: this
+  where
+    T as string {
+    if (Str\contains($this->getValue(), $other)) {
+      throw Surprise::create(
+        Str\format(
+          'Expected a string which does not contain %s, but got %s',
+          var_export_pure($other) as string,
+          var_export_pure($this->getValue()) as string,
+        ),
+        $this->getValue(),
+      );
+    }
+
+    return $this;
+  }
 }

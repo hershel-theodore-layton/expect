@@ -23,4 +23,10 @@ interface Assertions<T> {
   public function toHaveType<<<__Enforceable>> reify Ttype>(
   )[]: Assertions<Ttype>;
   public function toNotBeNan()[]: this where T as num;
+  public function toNotContainElement(mixed $other)[]: this
+  where
+    T as Container<mixed>;
+  public function toNotContainSubstring(string $other)[]: this
+  where
+    T as string;
 }
