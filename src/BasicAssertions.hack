@@ -70,7 +70,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     if ($this->getValue() >= $other) {
       throw Surprise::create(
         Str\format(
-          'Expected value to be greater than %s, but got %s',
+          'Expected value to be less than %s, but got %s',
           (string)$other,
           (string)$this->getValue(),
         ),
@@ -141,9 +141,9 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     if (!Str\contains($this->getValue(), $other)) {
       throw Surprise::create(
         Str\format(
-          'Expected a string which contains "%s", but got "%s"',
-          $other,
-          $this->getValue(),
+          'Expected a string which contains %s, but got %s',
+          var_export_pure($other) as string,
+          var_export_pure($this->getValue()) as string,
         ),
         $this->getValue(),
       );
@@ -152,14 +152,14 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     return $this;
   }
 
-  public function toEqual(T $value)[]: this {
-    if ($value !== $this->getValue()) {
+  public function toEqual(T $other)[]: this {
+    if ($other !== $this->getValue()) {
       throw Surprise::create(
         Str\format(
           'Expected the values to be equal, but got: %s',
           var_export_pure($this->getValue()) as string,
         ),
-        $value,
+        $this->getValue(),
       );
     }
 
@@ -204,12 +204,12 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
       if ($value[$k] !== $v) {
         throw Surprise::create(
           Str\format(
-            'Expected the value at [%s] to be equal, but they were %s and %s',
+            'Expected the value at [%s] to be equal, but expected %s, but got %s instead',
             $k is string
               ? Str\format('string(%s)', $k)
               : Str\format('int(%d)', $k),
-            var_export_pure($value[$k]) as string,
             var_export_pure($v) as string,
+            var_export_pure($value[$k]) as string,
           ),
           $value,
         );
@@ -226,7 +226,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
     if (!$value is Ttype) {
       throw Surprise::create(
         Str\format(
-          'Expected a value of a different type, but got %s',
+          'Expected a value of type T, but got %s',
           var_export_pure($this->getValue()) as string,
         ),
         $value,
@@ -248,7 +248,7 @@ trait BasicAssertions<T> implements InvokedAssertions<T> {
           'Expected a %s to have been thrown, but it returned without throwing.',
           $ex_name,
         ),
-        $this->getValue(),
+        null,
       );
     }
 
