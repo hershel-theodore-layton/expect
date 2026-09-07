@@ -2,6 +2,7 @@
 namespace HTL\Expect\_Private;
 
 use type Error, Exception, Throwable;
+use function get_class;
 
 final class ExceptionMessageGetter extends Exception {
   public static function getMessagePure(Exception $e)[]: string {
@@ -20,6 +21,6 @@ function throwable_get_message(Throwable $e)[]: string {
     return ExceptionMessageGetter::getMessagePure($e);
   }
 
-  invariant($e is Error, 'Unknown subclass of Throwable %s', \get_class($e));
+  invariant($e is Error, 'Unknown subclass of Throwable %s', get_class($e));
   return ErrorMessageGetter::getMessagePure($e);
 }
