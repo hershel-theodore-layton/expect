@@ -15,6 +15,9 @@ final class Asserter<T> {
 
   <<__Override>>
   public function getValue()[]: T {
+    if ($this->thrown is nonnull) {
+      throw $this->thrown;
+    }
     return $this->value;
   }
 
