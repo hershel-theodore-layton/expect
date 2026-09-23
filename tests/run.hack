@@ -5,7 +5,10 @@ use namespace HH;
 use namespace HH\Lib\Vec;
 use namespace HTL\Expect;
 use type Error, ReflectionFunction, RuntimeException, Throwable;
+use type HTL\Pragma\Pragmas;
 use function HTL\Expect\{expect, expect_invoked, expect_invoked_async};
+
+<<file: Pragmas(vec['PhaLinters', 'fixme:autoload_your_code'])>>
 
 <<__EntryPoint>>
 async function run_async()[defaults]: Awaitable<void> {
