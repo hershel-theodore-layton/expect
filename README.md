@@ -16,13 +16,15 @@ expect(1 + 1)->toEqual(2);
 
 ## Customization
 
-If your assertion is not included in the basic set, fear not. You can create
-your own assertions object. Simply use the `BasicAssertions` trait in a class
-and add methods specific to your project to it. For example:
+Use the `BasicAssertions` trait to add assertions specific to your project.
+Implement `getValue()`, plus the trait's protected `getThrown()` and
+`withValue()` methods. This example asserts that a numeric value is positive:
 
 ```HACK
-use namespace HH\Lib\Str;
+namespace MyProject\Tests;
+
 use namespace HTL\Expect;
+use type Throwable;
 
 final class MyAssertions<T> {
   use Expect\BasicAssertions<T>;
@@ -30,33 +32,27 @@ final class MyAssertions<T> {
   public function __construct(private T $value)[] {}
 
   <<__Override>>
-  protected function getValue()[]: T {
+  public function getValue()[]: T {
     return $this->value;
   }
 
-  public function toThrowMyDomainExpection<<<__Enforceable>> reify T>(
-  )[]: void where {
-    try {
-      ($this->value)();
-      throw new Expect\Surprise(
-        'Expected a MyDomainException to be thrown, but no exception was thrown.'
-      );
-    } catch (\Exception $e) {
-      if (!$e is T) {
-        throw new Expect\Surprise(Str\format(
-          'Expected a MyDomainException to be thrown, but got %s instead.',
-          \get_class($e),
-        ));
-      }
-    }
+  <<__Override>>
+  protected function getThrown()[]: ?Throwable {
+    // This example wraps values, so it has no captured invocation failure.
+    return null;
+  }
+
+  <<__Override>>
+  protected function withValue<Tvalue>(Tvalue $value)[]: MyAssertions<Tvalue> {
+    return new MyAssertions($value);
+  }
+
+  public function toBePositive()[]: this where T as num {
+    return $this->toBeGreaterThan(0);
   }
 }
-```
 
-Then create your own `expect()` function in your own namespace:
-
-```HACK
-function expect(T $value)[]: MyAssertions<T> {
+function expect<T>(T $value)[]: MyAssertions<T> {
   return new MyAssertions($value);
 }
 ```
