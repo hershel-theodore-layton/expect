@@ -1,23 +1,18 @@
 /** expect is MIT licensed, see /LICENSE. */
 namespace HTL\Expect\Tests;
 
-use namespace HH;
 use namespace HH\Lib\Vec;
-use namespace HTL\Expect;
-use type Error, ReflectionFunction, RuntimeException, Throwable;
-use type HTL\Pragma\Pragmas;
+use namespace HTL\{Expect, TestChain};
+use type Error, RuntimeException, Throwable;
 use function HTL\Expect\{expect, expect_invoked, expect_invoked_async};
 
-<<file: Pragmas(vec['PhaLinters', 'fixme:autoload_your_code'])>>
+<<TestChain\Discover>>
+function invocation_test(TestChain\Chain $chain)[]: TestChain\Chain {
+  return $chain->group(__FUNCTION__)
+    ->testAsync('invocation_assertions', run_async<>);
+}
 
-<<__EntryPoint>>
 async function run_async()[defaults]: Awaitable<void> {
-  $autoloader = __DIR__.'/../vendor/autoload.hack';
-  if (HH\could_include($autoloader)) {
-    require_once $autoloader;
-    new ReflectionFunction('Facebook\AutoloadMap\initialize') |> $$->invoke();
-  }
-
   await Vec\map_async(
     vec[new RuntimeException('boom'), new Error('boom')],
     async $exception ==> {
@@ -48,7 +43,6 @@ async function run_async()[defaults]: Awaitable<void> {
     ->toBeNonnull()
     ->toEqual(42);
 
-  echo "Invocation assertion tests passed.\n";
 }
 
 function assert_value_assertions_rethrow(

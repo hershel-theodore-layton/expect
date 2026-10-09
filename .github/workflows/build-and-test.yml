@@ -5,10 +5,11 @@
 name: Continuous Integration
 on:
   push:
-  pull_request:
   workflow_dispatch:
   schedule:
     - cron: "24 18 * * FRI"
+permissions:
+  contents: read
 jobs:
   build:
     name: HHVM ${{matrix.hhvm}}
@@ -38,9 +39,6 @@ jobs:
         with:
           hhvm: ${{matrix.hhvm}}
           hhvm_flags: ${{ startsWith(matrix.hhvm, '4') && '-dhhvm.autoload.enabled=true -dhhvm.autoload.db.path=.var/facts.db' || '' }}
-          skip_tests: true
+          test_engine: test-chain
           lint_engine: pha
           typecheck_engine: strict
-      - name: Run tests
-        shell: bash
-        run: hhvm ${{ startsWith(matrix.hhvm, '4') && '-dhhvm.autoload.enabled=true -dhhvm.autoload.db.path=.var/facts.db' || '' }} tests/run.hack
