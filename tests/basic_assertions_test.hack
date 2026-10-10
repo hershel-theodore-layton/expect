@@ -132,14 +132,10 @@ function basic_assertions_test(TestChain\Chain $chain)[]: TestChain\Chain {
       },
     )
     ->test('expected NaN is rejected', () ==> {
-      foreach (
-        vec[
-          () ==> expect(1)->toBeGreaterThan(Math\NAN),
-          () ==> expect(1)->toBeLessThan(Math\NAN),
-        ] as $assert
-      ) {
-        expect_invoked($assert)->toHaveThrown<HH\InvariantException>('NaN');
-      }
+      expect_invoked(() ==> expect(1)->toBeGreaterThan(Math\NAN))
+        ->toHaveThrown<HH\InvariantException>('NaN');
+      expect_invoked(() ==> expect(1)->toBeLessThan(Math\NAN))
+        ->toHaveThrown<HH\InvariantException>('NaN');
     })
     ->test('narrowing preserves value and chaining', () ==> {
       $value = expect<?int>(42)->toBeNonnull()->toEqual(42)->getValue();
