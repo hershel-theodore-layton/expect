@@ -18,7 +18,11 @@ final class Surprise extends RuntimeException {
   }
 
   public function withActualValue(mixed $actual_value)[]: this {
-    return
-      new static($this->message, $this->code, $this->getPrevious(), $actual_value);
+    return new static(
+      $this->message,
+      $this->code,
+      $this->getPrevious(),
+      $actual_value,
+    );
   }
 }
